@@ -35,6 +35,9 @@ def data1():
     raw = pd.read_parquet('/data/user/jovyan/ppmi.parquet')
     logger.info('After load raw.shape=%r', raw.shape)
     raw.drop_duplicates(inplace=True)
+    # columns = [u_id, i_id, rating, timestamp]
+    raw['u_id'] = raw['u_id'].astype(np.int32)
+    raw['i_id'] = raw['i_id'].astype(np.int32)
     logger.info('We have %d ratings', raw.shape[0])
     logger.info('The number of unique users we have is: %d ', len(raw.user_id.unique()))
     logger.info('The number of unique books we have is: %d ', len(raw.book_id.unique()))
@@ -43,7 +46,6 @@ def data1():
     logger.info('the min rating is: %d' % raw.rating.min())
     raw.head()
     raw.tail()
-    # columns = [u_id, i_id, rating, timestamp]
     # Return the shifted positive PMI.
     df1 = pd.DataFrame({ 'u_id': raw['user_id'], 'i_id': raw['book_id'], 'rating': raw['rating'].clip(lower=0.0)})
     return df1
@@ -121,6 +123,7 @@ def runit(df, edim=15):
     logger.info(f"  Test RMSE: {rmse:.2f}")
     logger.info(f"  Test  MAE:  {mae:.2f}")
     logger.info(f"Save embedding vectors here.")
+    return svd
 
 
 
