@@ -9,7 +9,7 @@ from .utils import timer
 
 
 class SVD():
-    """Implements Simon Funk SVD algorithm engineered during the Netflix Prize.
+    """Implements Simon Funk Matrix Factoring algorithm (aka Funk SVD) engineered during the Netflix Prize.
 
     Attributes:
         lr (float): learning rate.
@@ -47,6 +47,9 @@ class SVD():
 
         Returns:
             X (numpy array): mapped dataset.
+        Saves:
+            self.user_dict
+            self.item_dict
         """
         X = X.copy()
 
@@ -76,8 +79,7 @@ class SVD():
         Args:
             X (numpy array): training set, first column must contains users
                 indexes, second one items indexes, and third one ratings.
-            X_val (numpy array or `None`): validation set with same structure
-                as X.
+            X_val (numpy array or `None`): validation set with same structure as X.
         """
         n_user = len(np.unique(X[:, 0]))
         n_item = len(np.unique(X[:, 1]))
@@ -97,7 +99,7 @@ class SVD():
             pu, qi, bu, bi = _run_epoch(X, pu, qi, bu, bi, self.global_mean,
                                         self.n_factors, self.lr, self.reg)
 
-            if self.early_stopping:
+            if self.early_stopping and X_val:
                 val_metrics = _compute_val_metrics(X_val, pu, qi, bu, bi,
                                                    self.global_mean,
                                                    self.n_factors)
@@ -140,7 +142,7 @@ class SVD():
         print('Preprocessing data...\n')
         X = self._preprocess_data(X)
 
-        if early_stopping:
+        if early_stopping and X_val:
             X_val = self._preprocess_data(X_val, train=False)
 
         self.global_mean = np.mean(X[:, 2])
