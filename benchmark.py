@@ -36,18 +36,20 @@ def data1():
     logger.info('After load raw.shape=%r', raw.shape)
     raw.drop_duplicates(inplace=True)
     # columns = [u_id, i_id, rating, timestamp]
-    raw['u_id'] = raw['u_id'].astype(np.int32)
-    raw['i_id'] = raw['i_id'].astype(np.int32)
+    raw['u_id'] = raw['user_id'].astype(np.int32)
+    raw['i_id'] = raw['book_id'].astype(np.int32)
+    # raw.drop('user_id')
+    # raw.drop('book_id')
     logger.info('We have %d ratings', raw.shape[0])
-    logger.info('The number of unique users we have is: %d ', len(raw.user_id.unique()))
-    logger.info('The number of unique books we have is: %d ', len(raw.book_id.unique()))
-    logger.info('The median user rated %d books.' % raw.user_id.value_counts().median())
+    logger.info('The number of unique u_id we have is: %d ', len(raw.u_id.unique()))
+    logger.info('The number of unique i_id we have is: %d ', len(raw.i_id.unique()))
+    logger.info('The median ratings per user: %d' % raw.u_id.value_counts().median())
     logger.info('The max rating is: %d' % raw.rating.max())
     logger.info('the min rating is: %d' % raw.rating.min())
     raw.head()
     raw.tail()
     # Return the shifted positive PMI.
-    df1 = pd.DataFrame({ 'u_id': raw['user_id'], 'i_id': raw['book_id'], 'rating': raw['rating'].clip(lower=0.0)})
+    df1 = pd.DataFrame({ 'u_id': raw['u_id'], 'i_id': raw['i_id'], 'rating': raw['rating'].clip(lower=0.0)})
     return df1
 
 
